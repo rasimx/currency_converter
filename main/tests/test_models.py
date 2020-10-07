@@ -17,6 +17,8 @@ class CurrencyModelTest(TestCase):
         currency_1 = Currency.objects.create(code='USD', name='US dollar')
         currency_2 = Currency.objects.create(code='EUR', name='Euro')
         currency_1.update_rates()
+        # double request
+        currency_1.update_rates()
 
         rates = CurrencyRate.objects.filter(base=currency_1, target=currency_2, date=date.today())
         
