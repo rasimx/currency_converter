@@ -1,8 +1,10 @@
+from datetime import date
 from decimal import Decimal
 
 from django.test import TestCase
 
 from main.models import Currency, CurrencyRate
+from main.services import get_rates
 
 
 class CurrencyModelTest(TestCase):
@@ -16,9 +18,9 @@ class CurrencyModelTest(TestCase):
         currency_2 = Currency.objects.create(code='EUR', name='Euro')
         currency_1.update_rates()
 
-        currency_rate, created = CurrencyRate.objects.get_or_create(base=currency_1, target=currency_2, value=Decimal(100))
-
-        self.assertEqual(True, created)
+        rates = CurrencyRate.objects.filter(base=currency_1, target=currency_2, date=date.today())
+        
+        self.assertEqual(1, rates.count())
         
 
 class CurrencyRateModelTest(TestCase):

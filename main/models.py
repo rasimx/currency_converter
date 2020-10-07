@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 # Create your models here.
 
@@ -21,7 +23,8 @@ class Currency(models.Model):
         other_currencies = self.__class__.objects.exclude(code=self.code)
         
         for currency in other_currencies:
-            CurrencyRate.objects.get_or_create(base=self, target=currency, value=rates[currency.code])
+            if not CurrencyRate.objects.filter(base=self, target=currency, date=date.today()).exists():
+                CurrencyRate.objects.create(base=self, target=currency, value=rates[currency.code])
     
 
 class CurrencyRate(models.Model):
@@ -33,7 +36,7 @@ class CurrencyRate(models.Model):
     def __str__(self):
         return '{base} --> {target}'.format(base=self.base.code, target=self.target.code)
     
-
     class Meta:
         verbose_name = 'Currency rate'
         verbose_name_plural = 'Currency rates'
+        unique_together = ["base", "target", "date"]
